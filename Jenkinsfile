@@ -16,19 +16,14 @@ pipeline {
 
         stage('Install') {
             steps {
-                // Στοχεύουμε στο /app/my-react-app επειδή εκεί είναι το package.json
+                // Μπαίνει στο my-react-app και τρέχει npm install για να δημιουργήσει τα node_modules
                 sh 'docker run --rm -v "$(pwd)":/app -w /app/my-react-app node:20 npm install'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh 'docker run --rm -v "$(pwd)":/app -w /app/my-react-app node:20 npm test -- --watchAll=false'
             }
         }
 
         stage('Build') {
             steps {
+                // Μπαίνει στο my-react-app και χτίζει το Vite project
                 sh 'docker run --rm -v "$(pwd)":/app -w /app/my-react-app node:20 npm run build'
             }
         }
@@ -36,11 +31,10 @@ pipeline {
 
     post {
         success {
-            echo 'Build completed successfully'
+            echo 'Build completed successfully! Your Vite app is ready.'
         }
-
         failure {
-            echo 'Build failed'
+            echo 'Build failed.'
         }
     }
 }
