@@ -1,12 +1,12 @@
 pipeline {
-    agent any
-
-    environment {
-        NODE_VERSION = '20'
+    agent {
+        docker {
+            image 'node:20-alpine'
+            args '-v $HOME/.npm:/.npm'
+        }
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 git branch: 'main',
@@ -17,7 +17,7 @@ pipeline {
 
         stage('Install') {
             steps {
-                sh 'npm ci' 
+                sh 'npm ci'
             }
         }
 
@@ -31,13 +31,13 @@ pipeline {
             steps {
                 sh 'npm run build'
             }
-    }
+        }
+    } 
 
     post {
         success {
             echo 'Build completed successfully'
         }
-
         failure {
             echo 'Build failed'
         }
