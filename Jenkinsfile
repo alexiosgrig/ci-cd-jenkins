@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        NODE_VERSION = '20'
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -14,24 +10,26 @@ pipeline {
             }
         }
 
-        stage('Install') {
-            steps {
-                // Μπαίνει στο my-react-app και τρέχει npm install για να δημιουργήσει τα node_modules
-                sh 'docker run --rm -v "$(pwd)":/app -w /app/my-react-app node:20 npm install'
+        stage('Install & Build') {
+            agent {
+                docker {
+                    image 'node:20-alpine'
+                    reuseNode true
+                }
             }
-        }
-
-        stage('Build') {
             steps {
-                // Μπαίνει στο my-react-app και χτίζει το Vite project
-                sh 'docker run --rm -v "$(pwd)":/app -w /app/my-react-app node:20 npm run build'
+                sh '''
+                    cd my-react-app
+                    npm install
+                    npm run build
+                '''
             }
         }
     }
 
     post {
         success {
-            echo 'Build completed successfully! Your Vite app is ready.'
+            echo 'Build completed successfully!'
         }
         failure {
             echo 'Build failed.'
