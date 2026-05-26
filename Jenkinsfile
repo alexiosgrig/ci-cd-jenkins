@@ -11,24 +11,25 @@ pipeline {
         }
 
         stage('Install & Build') {
-            agent {
-                dockerContainer {
-                    image 'node:20-alpine'
-                }
-            }
             steps {
                 sh '''
-                    cd my-react-app
-                    npm install
-                    npm run build
+                    docker run -d --name vite-builder -w /app node:20-alpine sleep 3600
+                    docker cp my-react-app/. vite-builder:/app/
+                    docker exec vite-builder npm install
+                    docker exec vite-builder npm run build
+                    docker cp vite-builder:/app/dist ./dist
+                    docker rm -f vite-builder
                 '''
             }
         }
     }
 
     post {
+        always {
+            sh 'docker rm -f vite-builder || true'
+        }
         success {
-            echo 'Build completed successfully!'
+            echo 'Build completed successfully! Your Vite app is ready.'
         }
         failure {
             echo 'Build failed.'
