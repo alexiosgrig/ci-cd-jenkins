@@ -12,12 +12,14 @@ pipeline {
 
         stage('Install & Build') {
             agent {
-                docker {
+                // Αλλάξαμε το 'docker' σε 'dockerContainer' όπως ζήτησε ο Jenkins
+                dockerContainer {
                     image 'node:20-alpine'
                     reuseNode true
                 }
             }
             steps {
+                // Μπαίνουμε καθαρά στον φάκελό σου και τρέχουμε τις εντολές
                 sh '''
                     cd my-react-app
                     npm install
