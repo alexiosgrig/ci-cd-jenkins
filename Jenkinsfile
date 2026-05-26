@@ -16,20 +16,20 @@ pipeline {
 
         stage('Install') {
             steps {
-                // Επιστρέψαμε στο -w /app επειδή τα αρχεία είναι πλέον στο root
-                sh 'docker run --rm -v "$(pwd)":/app -w /app node:20 npm install'
+                // Στοχεύουμε στο /app/my-react-app επειδή εκεί είναι το package.json
+                sh 'docker run --rm -v "$(pwd)":/app -w /app/my-react-app node:20 npm install'
             }
         }
 
         stage('Test') {
             steps {
-                sh 'docker run --rm -v "$(pwd)":/app -w /app node:20 npm test -- --watchAll=false'
+                sh 'docker run --rm -v "$(pwd)":/app -w /app/my-react-app node:20 npm test -- --watchAll=false'
             }
         }
 
         stage('Build') {
             steps {
-                sh 'docker run --rm -v "$(pwd)":/app -w /app node:20 npm run build'
+                sh 'docker run --rm -v "$(pwd)":/app -w /app/my-react-app node:20 npm run build'
             }
         }
     }
