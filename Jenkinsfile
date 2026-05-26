@@ -16,22 +16,23 @@ pipeline {
 
         stage('Install') {
             steps {
-                sh 'docker run --rm -v $PWD:/app -w /app node:20 npm ci'
+                // Χρησιμοποιούμε το σκάτο σήμα του τρέχοντος φακέλου (.) και npm install
+                sh 'docker run --rm -v "$(pwd)":/app -w /app/my-react-app node:20 npm install'
             }
         }
 
         stage('Test') {
             steps {
-                sh 'docker run --rm -v $PWD:/app -w /app node:20 npm test -- --watchAll=false'
+                sh 'docker run --rm -v "$(pwd)":/app -w /app/my-react-app node:20 npm test -- --watchAll=false'
             }
         }
 
         stage('Build') {
             steps {
-                sh 'docker run --rm -v $PWD:/app -w /app node:20 npm run build'
+                sh 'docker run --rm -v "$(pwd)":/app -w /app/my-react-app node:20 npm run build'
             }
-        } 
-    } 
+        }
+    }
 
     post {
         success {
