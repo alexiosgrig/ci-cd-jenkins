@@ -1,9 +1,8 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:20-alpine'
-            args '-v $HOME/.npm:/.npm'
-        }
+    agent any
+
+    environment {
+        NODE_VERSION = '20'
     }
 
     stages {
@@ -17,27 +16,28 @@ pipeline {
 
         stage('Install') {
             steps {
-                sh 'npm ci'
+                sh 'docker run --rm -v $PWD:/app -w /app node:20 npm ci'
             }
         }
 
         stage('Test') {
             steps {
-                sh 'npm test -- --watchAll=false'
+                sh 'docker run --rm -v $PWD:/app -w /app node:20 npm test -- --watchAll=false'
             }
         }
 
         stage('Build') {
             steps {
-                sh 'npm run build'
+                sh 'docker run --rm -v $PWD:/app -w /app node:20 npm run build'
             }
-        }
-    } 
+        } // <-- Εδώ έκλεισε σωστά το stage('Build')
+    } // <-- Εδώ κλείνουν όλα τα stages μαζί
 
     post {
         success {
             echo 'Build completed successfully'
         }
+
         failure {
             echo 'Build failed'
         }
