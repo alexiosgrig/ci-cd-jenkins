@@ -16,25 +16,22 @@ pipeline {
 
         stage('Install') {
             steps {
-                // Αλλάξαμε το -w /app σε -w /app/my-react-app
-                sh "docker run --rm -v \"${WORKSPACE}\":/app -w /app/my-react-app node:20 npm install"
+                sh 'docker run --rm -v $PWD:/app -w /app node:20 npm ci'
             }
         }
 
         stage('Test') {
             steps {
-                // Αλλάξαμε το -w /app σε -w /app/my-react-app
-                sh "docker run --rm -v \"${WORKSPACE}\":/app -w /app/my-react-app node:20 npm test -- --watchAll=false"
+                sh 'docker run --rm -v $PWD:/app -w /app node:20 npm test -- --watchAll=false'
             }
         }
 
         stage('Build') {
             steps {
-                // Αλλάξαμε το -w /app σε -w /app/my-react-app
-                sh "docker run --rm -v \"${WORKSPACE}\":/app -w /app/my-react-app node:20 npm run build"
+                sh 'docker run --rm -v $PWD:/app -w /app node:20 npm run build'
             }
-        }
-    }
+        } 
+    } 
 
     post {
         success {
