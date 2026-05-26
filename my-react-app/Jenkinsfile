@@ -16,22 +16,25 @@ pipeline {
 
         stage('Install') {
             steps {
-                sh 'docker run --rm -v $PWD:/app -w /app node:20 npm ci'
+                // Αλλάξαμε το -w /app σε -w /app/my-react-app
+                sh "docker run --rm -v \"${WORKSPACE}\":/app -w /app/my-react-app node:20 npm install"
             }
         }
 
         stage('Test') {
             steps {
-                sh 'docker run --rm -v $PWD:/app -w /app node:20 npm test -- --watchAll=false'
+                // Αλλάξαμε το -w /app σε -w /app/my-react-app
+                sh "docker run --rm -v \"${WORKSPACE}\":/app -w /app/my-react-app node:20 npm test -- --watchAll=false"
             }
         }
 
         stage('Build') {
             steps {
-                sh 'docker run --rm -v $PWD:/app -w /app node:20 npm run build'
+                // Αλλάξαμε το -w /app σε -w /app/my-react-app
+                sh "docker run --rm -v \"${WORKSPACE}\":/app -w /app/my-react-app node:20 npm run build"
             }
-        } // <-- Εδώ έκλεισε σωστά το stage('Build')
-    } // <-- Εδώ κλείνουν όλα τα stages μαζί
+        }
+    }
 
     post {
         success {
