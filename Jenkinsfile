@@ -33,7 +33,7 @@ pipeline {
         stage('Deploy to Vercel') {
             steps {
              echo 'Starting deployment to Vercel using Docker...'
-             withCredentials([string(credentialsId: 'vercel-token', variable: 'VERCEL_TOKEN')]) {
+             withCredentials([string(credentialsId: 'vercel-auth-token', variable: 'VERCEL_TOKEN')]) {
                   sh '''
                    docker run --rm \
                   -v $(pwd)/dist:/app \
