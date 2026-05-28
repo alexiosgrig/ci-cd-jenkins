@@ -32,10 +32,14 @@ pipeline {
 
         stage('Deploy to Vercel') {
             steps {
-                echo 'Starting deployment to Vercel...'
+                echo 'Starting deployment to Vercel using Docker...'
                 sh '''
-                    npm install --global vercel
-                    vercel ./dist --prod --token ${VERCEL_TOKEN} --yes
+                    docker run --rm \
+                      -v $(pwd):/app \
+                      -w /app \
+                      -e VERCEL_TOKEN=${VERCEL_TOKEN} \
+                      node:20-alpine \
+                      sh -c "npm install -g vercel && vercel ./dist --prod --token \\$VERCEL_TOKEN --yes"
                 '''
             }
         }
